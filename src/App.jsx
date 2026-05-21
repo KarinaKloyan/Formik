@@ -2,6 +2,7 @@ import { Formik } from "formik";
 import * as YUP from "yup";
 import "./App.css";
 import FullNameInput from "./components/FullNameInput/FullNameInput";
+import BirthdayInput from "./components/BirthdayInput/BirthdayInput";
 import GenderInput from "./components/GenderInput/GenderInput";
 import PasswordInput from "./components/PasswordInput/PasswordInput";
 import SubmitButton from "./components/SubmitButton/SubmitButton";
@@ -44,6 +45,39 @@ function App() {
       .trim()
       .oneOf([YUP.ref("password")], "Passwords must match")
       .required("Confirm password is required"),
+    birthday: YUP.object().shape({
+      day: YUP.number()
+        .typeError("Day is required")
+        .min(1, "Invalid day")
+        .max(31, "Invalid day")
+        .required("Day is required"),
+
+      month: YUP.string()
+        .oneOf(
+          [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ],
+          "Invalid month",
+        )
+        .required("Month is required"),
+
+      year: YUP.number()
+        .typeError("Year is requred")
+        .min(1980, "Year must be between 1980 and 2008")
+        .max(2008, "Year must be between 1980 and 2008")
+        .required("Year is required"),
+    }),
   });
 
   return (
@@ -56,6 +90,11 @@ function App() {
           contact: "",
           password: "",
           confirmPassword: "",
+          birthday: {
+            day: "",
+            month: "",
+            year: "",
+          },
         }}
         onSubmit={(value) => console.log(value)}
         validationSchema={validSchema}
@@ -63,6 +102,12 @@ function App() {
         {({ values, handleChange, handleSubmit, errors, touched }) => (
           <form onSubmit={handleSubmit} className="container">
             <FullNameInput
+              values={values}
+              handleChange={handleChange}
+              errors={errors}
+              touched={touched}
+            />
+            <BirthdayInput
               values={values}
               handleChange={handleChange}
               errors={errors}
